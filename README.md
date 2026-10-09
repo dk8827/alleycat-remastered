@@ -1,15 +1,82 @@
 # Alley Cat Remastered
 
-A hand-painted Alley Cat for the browser. Climb the bins, sneak into the rooms, and slide between **HD and original CGA graphics while you play**.
+**The original game logic. Two renderers. One live game.**
 
-![Alley Cat with the live CGA/HD comparison](docs/images/gameplay.png)
+Alley Cat's DOS program, translated into JavaScript and paired with a hand-painted HD renderer. Movement, collisions, enemies, scoring, room challenges, and progression still come from the original game instructions. Slide between **CGA and HD while you play**—both views show the same running game.
+
+![The same live game, with original CGA on the left and HD on the right](docs/images/gameplay.png)
+
+The starting point is a **55,067-byte executable reproduced exactly from assembly source**. The browser build translates **8,546 instructions** into JavaScript, supplies the devices they expect, and adds a new presentation layer around their execution.
+
+## One game, two views
+
+The game still draws its original CGA graphics into video memory. Those bytes produce the 320×200 view. Alongside it, an observer captures drawing operations and game state for a separate 1440×1080 HD renderer.
+
+```mermaid
+flowchart TD
+  A[Original game instructions] --> B[Generated JavaScript + device model]
+  K[Keyboard / touch] --> B
+  B --> C[CGA video memory]
+  B --> D[Observed drawing operations and state]
+  B --> S[Original speaker writes → synthesized audio]
+  C --> E[320×200 CGA view]
+  D --> F[1440×1080 HD view]
+  E --> G[Live comparison slider]
+  F --> G
+```
+
+The slider reveals two presentations of **one execution**. There is one cat position, one set of enemies, one collision system, and one score. Dragging the divider does not restart the game or change its rules.
+
+For example, the original instructions decide when a window opens, how far it has opened, and whether the cat can enter. The HD renderer uses that state to draw the painted window. The same separation applies to the bins, clotheslines, room hazards, fight animations, and courtship sequences.
+
+## How it was built
+
+### 1. Preserve the program exactly
+
+Starting with the DOS executable, we recovered its assembly instructions and initialized data into buildable source. NASM reproduces the entire file: instructions, graphics, sound tables, executable header, relocations, and padding.
+
+Every build checks the result against the original SHA-256 before translation. A changed byte fails the build. The [assembly](game/asm/alleycat.asm) and [build tools](tools/build.py) are included in this repository.
+
+### 2. Translate the instructions ahead of time
+
+The [translator](tools/translate.py) emits JavaScript for each instruction, grouped into 99 code pages. The execution layer preserves the 16-bit registers, flags, segmented memory, stack, and control flow. Instruction addresses remain available for observing the game and debugging it.
+
+The browser executes this generated code directly. A device model provides the BIOS services, keyboard state, clock, CGA behavior, and programmable timer the game expects. Speaker timer and gate writes drive audio synthesis, preserving the game's own melodies and effect sequences.
+
+All of this runs in the browser. The local Node process only serves static files.
+
+### 3. Fit the artwork to the game
+
+The HD layer observes the game's drawing operations and uses their positions, selected sprite frames, clipping, and drawing order. Gameplay continues to own collision and animation state.
+
+Making that convincing required more than replacing sprites. Painted bin rims must meet the original landing surface. Clothes need the original count and dimensions. Windows need every opening phase. A cat hanging from a line needs the correct back-facing pose. Erased sprites, fight clouds, score lettering, and transitions must appear and disappear with their CGA counterparts.
+
+The renderer maps scenery landmarks with patches and triangles, and registers characters against their original visible bounds. CGA pixels also have a display aspect to account for: both views are shown at 4:3, so a game coordinate maps to HD with **X × 4.5 and Y × 5.4**.
+
+### 4. Compare execution, then test the presentation
+
+We checked the translated program against original-code execution, then added regressions for gameplay, sound, and the HD view. The repository includes the recorded baseline fixtures and tests that replay them: [execution checkpoints](tests/core.test.mjs), [behavioral contracts](tests/contracts.test.mjs), and [renderer checks](tests/renderer.test.mjs).
+
+| Check                 | Coverage                                                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Exact game build      | All **55,067 bytes**, enforced by SHA-256                                                                                      |
+| Execution checkpoints | **165** startup/gameplay checkpoints and **640** room checkpoints: registers, game data, and CGA memory                        |
+| Behavioral contracts  | **3,314** recorded executions covering objectives, collisions, progression, restart, and more; device events replayed in order |
+| Live sessions         | **8 scenes × 4 difficulties × 2 timing profiles**                                                                              |
+| Save / restore        | Deterministic subsequent game state, presentation, and audio                                                                   |
+| Presentation          | Sprite bounds, contact points, clipping, drawing order, room transitions, and cinematics                                       |
+
+Run `npm test` to execute the **82-test suite**. CI builds and tests the project from a fresh checkout.
+
+**What “original” means here:** the rebuilt DOS program is byte-identical, and the translated execution matches the recorded states in the covered tests. Browser device timing is modeled. We do not claim cycle-exact physical-PC behavior, identical audio waveforms, or proof of every possible playthrough.
+
+## Play
 
 - Eight scenes, room challenges, courtship, and four difficulty settings.
-- Hand-painted characters and scenery, with original game coordinates.
-- Live CGA/HD comparison, including transitions and result screens.
+- A live CGA/HD slider that also works through transitions and result screens.
 - PC speaker music and effects, keyboard and touch controls.
-- Pause, full screen, and a save slot stored in your browser.
-- Static hosting: gameplay, graphics, and sound all run locally in the browser.
+- Pause, full screen, and a browser-local save slot.
+- Static hosting, with no application backend or DOSBox runtime required.
 
 ## Run locally
 
@@ -29,16 +96,16 @@ Sound starts after you press Play. You can listen to the title music or choose *
 
 ## Controls
 
-| Control | Action |
-| --- | --- |
-| Arrow keys / WASD | Move and jump |
-| Space / Alt | Room-specific action |
-| Home / Page Up | Jump left / right |
-| Numeric keypad | Directional movement |
-| Escape | Pause / resume; exit full screen |
-| Ctrl+R | Restart |
-| Ctrl+S | Toggle sound |
-| HD ↔ CGA slider | Reveal either presentation of the same game state |
+| Control           | Action                                            |
+| ----------------- | ------------------------------------------------- |
+| Arrow keys / WASD | Move and jump                                     |
+| Space / Alt       | Room-specific action                              |
+| Home / Page Up    | Jump left / right                                 |
+| Numeric keypad    | Directional movement                              |
+| Escape            | Pause / resume; exit full screen                  |
+| Ctrl+R            | Restart                                           |
+| Ctrl+S            | Toggle sound                                      |
+| HD ↔ CGA slider  | Reveal either presentation of the same game state |
 
 Touch buttons are below the game. Choose a difficulty before starting; practice mode starts in a selected scene. Save and Restore use one browser-local slot. Saves are not synchronized across devices and may be unavailable in private browsing. Switching tabs pauses gameplay.
 
@@ -60,21 +127,21 @@ BASE_PATH=/alleycat-remastered PORT=8771 npm start
 
 Open `http://127.0.0.1:8771/alleycat-remastered/`. Any static host can serve `dist/`; no Python service, DOSBox download, or application backend is needed at runtime. HTTPS or localhost is required for browser cryptography and reliable audio startup.
 
-| Directory | Purpose |
-| --- | --- |
-| `game/asm/` | Game program and data used by the build |
-| `engine/` | Translated execution support, devices, sound, and game sessions |
-| `renderer/` | CGA decoding and HD drawing |
-| `web/` | Player interface, controls, storage, and audio playback |
-| `assets/` | Source paintings and sprite crop definitions |
-| `tools/` | Build, translation, and local static server |
-| `tests/` | Engine, gameplay, audio, and presentation regression tests |
+| Directory   | Purpose                                                         |
+| ----------- | --------------------------------------------------------------- |
+| `game/asm/` | Game program and data used by the build                         |
+| `engine/`   | Translated execution support, devices, sound, and game sessions |
+| `renderer/` | CGA decoding and HD drawing                                     |
+| `web/`      | Player interface, controls, storage, and audio playback         |
+| `assets/`   | Source paintings and sprite crop definitions                    |
+| `tools/`    | Build, translation, and local static server                     |
+| `tests/`    | Engine, gameplay, audio, and presentation regression tests      |
 
 Read [architecture](docs/architecture.md) for the data flow and [contributing](CONTRIBUTING.md) before changing gameplay or artwork.
 
 ## Compatibility and limitations
 
-The player targets current desktop Chromium, Firefox, and Safari, plus touch browsers. Device timing is modeled; this is not a cycle-exact PC simulation. The tests cover all scenes, selected complete routes, transitions, sound behavior, and save/restore; they do not prove every possible playthrough. See [testing](docs/testing.md) for the checks and how to report a problem.
+The player has been checked in desktop Chromium and Firefox, and mobile WebKit. Browser audio starts after a user gesture, and switching tabs pauses the game. See [testing](docs/testing.md) for coverage, browser checks, and how to report a problem.
 
 ## Credits and notices
 
