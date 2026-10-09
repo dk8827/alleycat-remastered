@@ -1,3 +1,4 @@
+import { wipe, exitFullscreen } from "./viewer.js";
 import { readSave, writeSave } from "./storage.js";
 import { Painter, ROOMS } from "../renderer/renderer.js";
 import { pages, boundaries } from "../generated/translated.js";
@@ -29,11 +30,12 @@ const logLines = [];
 const log = (s) => {
   logLines.push(String(s));
   if (logLines.length > 100) logLines.shift();
-  $("log").textContent = logLines.join("\n");
 };
 const fail = (e) => {
   log(e.stack || e);
-  $("status").textContent = "Runtime error";
+  console.error(e);
+  $("status").textContent = "Something went wrong";
+  $("cover").hidden = false;
   $("boot").textContent = e.message;
 };
 const decoded = KEY_INDICES;
@@ -60,50 +62,22 @@ function key(owner, code, down) {
 }
 
 function controls() {
-  for (const id of ["pause", "restart", "save", "sound"])
+  for (const id of ["pause", "save", "sound"])
     $(id).disabled = !active || starting || saving;
-  $("save").disabled ||= paused || session?.phase === "intro";
+  $("save").disabled ||= session?.phase === "intro";
+  $("restart").disabled = starting || saving;
+  $("options").disabled = starting || saving;
+  $("start").hidden = active && !state?.gameover && !starting;
+  $("pause").hidden = !active || !!state?.gameover;
+  $("continue-save").hidden = active || starting || !persistentSave;
   $("skip-intro").hidden = !active || session?.phase !== "intro";
   $("pause").disabled ||= !!state?.gameover;
   $("load").disabled = !saved || starting || saving || !active;
   $("start").disabled = starting;
   $("pause").textContent = paused ? "Resume" : "Pause";
   $("sound").textContent = muted ? "Sound off" : "Sound on";
-  $("cycles").disabled = starting || (active && !paused);
   $("difficulty").disabled = starting || (active && !paused);
   $("practice").disabled = starting || (active && !paused);
-}
-function wipe() {
-  const stage = $("stage").getBoundingClientRect(),
-    w = Math.min(stage.width, (stage.height * 4) / 3),
-    h = (w * 3) / 4;
-  for (const canvas of [screen, original])
-    Object.assign(canvas.style, {
-      position: "absolute",
-      width: w + "px",
-      height: h + "px",
-      left: (stage.width - w) / 2 + "px",
-      top: (stage.height - h) / 2 + "px",
-      inset: "auto",
-      right: "auto",
-      bottom: "auto",
-      margin: "0",
-    });
-  // Inset resets offsets, so set the two explicit coordinates last.
-  for (const canvas of [screen, original]) {
-    canvas.style.left = (stage.width - w) / 2 + "px";
-    canvas.style.top = (stage.height - h) / 2 + "px";
-  }
-  $("divider").style.top = (stage.height - h) / 2 + "px";
-  $("divider").style.height = h + "px";
-  $("divider").style.bottom = "auto";
-  const v = Number($("wipe").value);
-  original.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
-  $("divider").style.display = v > 0 && v < 100 ? "block" : "none";
-  const canvasRect = original.getBoundingClientRect();
-  const stageRect = $("stage").getBoundingClientRect();
-  $("divider").style.left =
-    canvasRect.left - stageRect.left + (canvasRect.width * v) / 100 + "px";
 }
 function accept(s) {
   state = s;
@@ -117,7 +91,7 @@ function accept(s) {
     : s.gameover
       ? "Game over · restart to play"
       : s.cinematic?.kind === "intro"
-        ? "Original title music · Enter the alley when ready"
+        ? "Title music"
         : "Live";
 }
 function gameOver(menu) {
@@ -133,7 +107,7 @@ function gameOver(menu) {
   $("cover").classList.add("night-over");
   $("cover").hidden = false;
   $("boot").textContent =
-    "The night is over. Start again or restore your snapshot.";
+    "Night over. Play again or restore your saved game in Options.";
   $("start").textContent = "Play again";
   $("status").textContent = "Game over";
   controls();
@@ -171,7 +145,32 @@ async function stop() {
   speaker = null;
   session = null;
 }
-async function start(restore = false) {
+let resourcePromise = null;
+function loadResources() {
+  if (!resourcePromise)
+    resourcePromise = (async () => {
+      await painter.load((f) => {
+        $("boot").textContent = "Loading artwork… " + Math.round(f * 100) + "%";
+      });
+      const response = await fetch(new URL("../game/CAT.EXE", import.meta.url));
+      if (!response.ok)
+        throw Error("Could not load the game. Please try again.");
+      const exe = new Uint8Array(await response.arrayBuffer());
+      const hash = Array.from(
+        new Uint8Array(await crypto.subtle.digest("SHA-256", exe)),
+        (x) => x.toString(16).padStart(2, "0"),
+      ).join("");
+      if (hash !== EXE_SHA256) throw Error("Game data checksum mismatch");
+      log("Game data verified");
+      return exe;
+    })().catch((error) => {
+      resourcePromise = null;
+      throw error;
+    });
+  return resourcePromise;
+}
+export async function start(restore = false, initialAudio = null) {
+  closeSettings(false);
   restore = restore === true;
   $("cover").classList.remove("night-over");
   if (starting) return;
@@ -181,7 +180,8 @@ async function start(restore = false) {
   $("cover").hidden = false;
   try {
     await stop();
-    audio = new AudioContext({ latencyHint: "interactive" });
+    audio = initialAudio ?? new AudioContext({ latencyHint: "interactive" });
+    await saveReady;
     await audio.resume();
     saved = persistentSave?.snapshot ?? null;
     state = null;
@@ -192,25 +192,11 @@ async function start(restore = false) {
     $("snapshot-status").textContent = persistentSave
       ? "A saved game is available on this browser."
       : "Your save is stored on this browser.";
-    await painter.load((f) => {
-      $("boot").textContent =
-        "Loading painted world · " + Math.round(f * 100) + "%";
-    });
-    const exe = new Uint8Array(
-      await (
-        await fetch(new URL("../game/CAT.EXE", import.meta.url))
-      ).arrayBuffer(),
-    );
-    const hash = Array.from(
-      new Uint8Array(await crypto.subtle.digest("SHA-256", exe)),
-      (x) => x.toString(16).padStart(2, "0"),
-    ).join("");
-    if (hash !== EXE_SHA256) throw Error("Game data checksum mismatch");
-    log("Game data verified");
+    const exe = await loadResources();
     session = new PortableSession(exe, pages, boundaries, {
       difficulty: Number($("difficulty").value),
       practice: $("practice").value === "" ? null : Number($("practice").value),
-      cycles: Number($("cycles").value),
+      cycles: 1500,
       rate: audio.sampleRate,
       intro: !restore,
     });
@@ -233,9 +219,10 @@ async function start(restore = false) {
     accept(session.frame);
     portableFrame();
     loopTimer = setInterval(portableFrame, 10);
-    $("wipe").value = 0;
     wipe();
     $("cover").hidden = true;
+    $("preview-hd").hidden = true;
+    $("preview-cga").hidden = true;
     $("continue-save").hidden = true;
     screen.focus({ preventScroll: true });
     log(
@@ -248,6 +235,7 @@ async function start(restore = false) {
     fail(e);
     await stop();
     $("cover").hidden = false;
+    $("start").textContent = "Try again";
   } finally {
     starting = false;
     controls();
@@ -299,7 +287,7 @@ async function snapshot(load) {
   } finally {
     saving = false;
     controls();
-    screen.focus({ preventScroll: true });
+    if (!$("settings").open) screen.focus({ preventScroll: true });
   }
 }
 $("start").onclick = () => start();
@@ -317,7 +305,10 @@ $("pause").onclick = () => {
   screen.focus({ preventScroll: true });
 };
 $("save").onclick = () => snapshot(false);
-$("load").onclick = () => snapshot(true);
+$("load").onclick = () => {
+  closeSettings(false);
+  snapshot(true);
+};
 $("sound").onclick = () => {
   muted = !muted;
   if (speaker?.output) speaker.output.gain.value = muted ? 0 : 1;
@@ -328,37 +319,22 @@ $("sound").onclick = () => {
   controls();
   screen.focus({ preventScroll: true });
 };
-$("wipe").oninput = wipe;
-$("geometry").onchange = () => (painter.geometry = $("geometry").checked);
-function exitFullscreen() {
-  if (document.fullscreenElement) return document.exitFullscreen();
-  document.querySelector(".playground").classList.remove("expanded");
-  wipe();
-}
-$("fullscreen").onclick = async () => {
-  if (
-    document.fullscreenElement ||
-    document.querySelector(".playground").classList.contains("expanded")
-  ) {
-    await exitFullscreen();
-    return;
-  }
-  const box = document.querySelector(".playground");
-  try {
-    if (box.requestFullscreen) await box.requestFullscreen();
-    else box.classList.add("expanded");
-  } catch {
-    box.classList.add("expanded");
-  }
-  screen.focus();
-  wipe();
+let resumeAfterSettings = false;
+$("options").onclick = () => {
+  resumeAfterSettings = active && !paused;
+  if (active) pause(true);
+  $("settings").showModal();
 };
-$("exit-fullscreen").onclick = exitFullscreen;
-document.addEventListener("fullscreenchange", () =>
-  requestAnimationFrame(wipe),
-);
-window.addEventListener("resize", wipe);
-new ResizeObserver(wipe).observe($("stage"));
+function closeSettings(resume = true) {
+  if (!resume) resumeAfterSettings = false;
+  $("settings").close();
+}
+$("close-settings").onclick = () => closeSettings();
+$("settings").addEventListener("close", () => {
+  if (resumeAfterSettings && !starting) pause(false);
+  resumeAfterSettings = false;
+  if (active) screen.focus({ preventScroll: true });
+});
 screen.addEventListener("keydown", (e) => {
   if (
     e.code === "Escape" &&
@@ -458,6 +434,7 @@ window.alleycat = {
       packetCount,
       elapsed: performance.now() - startTime,
       translationMs: portableSpent,
+      log: [...logLines],
       audio: speaker
         ? {
             samples: speaker.samples,
@@ -477,7 +454,7 @@ window.alleycat = {
 controls();
 wipe();
 
-readSave(EXE_SHA256)
+const saveReady = readSave(EXE_SHA256)
   .then((v) => {
     persistentSave = v;
     saved = v?.snapshot ?? null;
@@ -489,13 +466,3 @@ readSave(EXE_SHA256)
       "Persistent storage unavailable; saves remain in this tab.";
     log(e.message);
   });
-
-fetch(new URL("../data/asset-delivery.json", import.meta.url))
-  .then((r) => r.json())
-  .then((m) =>
-    document.documentElement.style.setProperty(
-      "--alley-cover",
-      `url("${new URL(m["assets/alley-wall-v3.png"], import.meta.url).href}")`,
-    ),
-  )
-  .catch(() => {});

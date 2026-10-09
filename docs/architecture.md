@@ -46,3 +46,9 @@ A save includes machine memory, registers, timing state, audio synthesis state, 
 ## Static packaging
 
 `npm run build` creates a self-contained `dist/`. Imports and asset URLs resolve relative to their modules, so the same package can be hosted at `/` or a subdirectory. The local Node server serves only this directory. Nothing from the source tree needs to be exposed by a production host.
+
+## First load and comparison
+
+`web/boot.js` loads the comparison controls and two small preview captures before loading the engine. Both captures show the same frame from the original game running through `PortableSession`. They are presentation previews, not a running game. The CGA capture is intentionally displayed at 4:3 to account for its original pixel aspect ratio.
+
+Pressing Play dynamically imports `web/app.js` and loads the full artwork. The previews are then replaced with live canvases, preserving the chosen divider position. `web/viewer.js` keeps the two canvases and preview images aligned; `web/comparison.js` synchronizes the native range control, pointer dragging, and keyboard access. Options uses a modal dialog and pauses an active game while it is open.

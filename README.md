@@ -2,7 +2,7 @@
 
 **From a 1984 DOS executable to a playable HD remaster.**
 
-This project began by reverse-engineering Alley Cat into assembly that rebuilds the original DOS executable **byte for byte**. We then statically translated its instructions into JavaScript and built an independent, hand-painted HD renderer around the running game.
+This project began by reverse-engineering Alley Cat into assembly that rebuilds the original DOS executable **byte for byte**. We then statically translated its instructions into JavaScript and built an independent HD renderer around the running game, with AI-generated artwork.
 
 The original instructions still drive movement, collisions, enemies, scoring, and progression. The **live CGA/HD slider** reveals two views of the same execution.
 
@@ -100,7 +100,7 @@ Run `npm test` to execute the **82-test suite**. CI builds and tests the project
 
 ## Artwork
 
-**All new HD paintings were created with ChatGPT Images 2.5.** Characters, scenery, props, and effects were generated in a consistent painted-cartoon style, then prepared as sprite sheets and registered to the original game's coordinates and animation states.
+**All new HD artwork were created with ChatGPT Images 2.5.** Characters, scenery, props, and effects were generated in a consistent classic cartoon style, then prepared as sprite sheets and registered to the original game's coordinates and animation states.
 
 These are source sheets used by the renderer. The jumping and hanging poses face away from the camera, just as they do in CGA; the fight clouds replace the original cat-and-dog scuffle frames.
 
@@ -123,7 +123,7 @@ The same approach extends to the game's courtship and bonus sequences. Below, th
 
 </details>
 
-The image-generation credit covers the new HD paintings. Original CGA graphics, game data, music, and sound effects come from Alley Cat; sprite registration, clipping, and procedural drawing are handled by the renderer.
+The image-generation credit covers the new HD artwork. Original CGA graphics, game data, music, and sound effects come from Alley Cat; sprite registration, clipping, and procedural drawing are handled by the renderer.
 
 ## Play
 
@@ -164,7 +164,7 @@ Sound starts after you press Play. You can listen to the title music or choose *
 | Ctrl+S            | Toggle sound                                      |
 | HD ↔ CGA slider  | Reveal either presentation of the same game state |
 
-Touch buttons are below the game. Choose a difficulty before starting; practice mode starts in a selected scene. Save and Restore use one browser-local slot. Saves are not synchronized across devices and may be unavailable in private browsing. Switching tabs pauses gameplay.
+Drag the large slider or the divider directly over the game to compare graphics, even before pressing Play. Touch controls appear on touch devices. Open **Options** for difficulty, practice rooms, and Save / Restore. Opening Options pauses gameplay; closing it resumes a game that was running. Saves use one browser-local slot. Saves are not synchronized across devices and may be unavailable in private browsing. Switching tabs pauses gameplay.
 
 ## Development
 
@@ -192,7 +192,7 @@ The hosted demo uses GitHub Pages. Pushes to `main` deploy the static player onl
 | `engine/`   | Translated execution support, devices, sound, and game sessions |
 | `renderer/` | CGA decoding and HD drawing                                     |
 | `web/`      | Player interface, controls, storage, and audio playback         |
-| `assets/`   | Source paintings and sprite crop definitions                    |
+| `assets/`   | Source artwork and sprite crop definitions                      |
 | `tools/`    | Build, translation, and local static server                     |
 | `tests/`    | Engine, gameplay, audio, and presentation regression tests      |
 
@@ -204,6 +204,6 @@ The player has been checked in desktop Chromium and Firefox, and mobile WebKit. 
 
 ## Credits and notices
 
-Alley Cat was created by Bill Williams. This is an unofficial fan project. All new HD paintings were created with **ChatGPT Images 2.5** and registered to the game's drawing coordinates.
+Alley Cat was created by Bill Williams. This is an unofficial fan project. All new HD artwork were created with **ChatGPT Images 2.5** and registered to the game's drawing coordinates.
 
 See [notices](NOTICE.md) and [component licensing](LICENSES.md) for original game material and third-party components.

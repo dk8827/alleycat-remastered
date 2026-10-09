@@ -1,33 +1,64 @@
 <!doctype html>
 <html lang="en">
-  <meta charset="utf-8" /><meta
-    name="viewport"
-    content="width=device-width,initial-scale=1"
-  /><meta
-    name="description"
-    content="Play Alley Cat with hand-painted graphics. Slide between HD and original CGA while you play."
-  /><title>Alley Cat · Hand-painted remaster</title
-  ><link rel="icon" href="data:," /><link rel="stylesheet" href="style.css" />
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Play Alley Cat with reimagined HD graphics. Drag the live comparison slider between the original 1984 CGA graphics and new AI-generated artwork."
+    />
+    <title>Alley Cat · HD Remaster</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preload" href="preview-hd.webp" as="image" />
+  </head>
   <body>
     <main>
-      <header>
-        <a href="./" class="brand">ALLEY CAT <span>1984 → NOW</span></a
-        ><span class="edition">THE HAND-PAINTED REMASTER</span>
-      </header>
-      <div class="intro">
-        <div>
-          <p class="eyebrow">1984, IN A NEW LIGHT</p>
-          <h1>Back to the alley.</h1>
+      <header class="masthead">
+        <div class="identity">
+          <h1>Alley Cat<span>HD REMASTER</span></h1>
+          <p>The original game. Reimagined graphics.</p>
         </div>
-        <p>
-          The original game. A painted world.<br />Slide between the two as you
-          play.
-        </p>
-      </div>
-      <section class="playground">
-        <div class="bar">
-          <span id="engine">Alley Cat · HD / CGA</span
-          ><span id="status" role="status">Ready to play</span>
+        <a
+          class="source-link"
+          href="https://github.com/dk8827/alleycat-remastered"
+          >View on GitHub ↗</a
+        >
+      </header>
+      <section class="playground" aria-label="Play Alley Cat">
+        <div class="comparison">
+          <div class="comparison-heading">
+            <h2>Slide between 1984 and today.</h2>
+            <span id="comparison-value" aria-hidden="true">50 / 50</span>
+          </div>
+          <div class="comparison-track">
+            <button
+              class="view-end"
+              data-view="0"
+              aria-label="Show all HD graphics"
+            >
+              HD
+            </button>
+            <input
+              id="wipe"
+              aria-label="CGA reveal"
+              aria-describedby="comparison-help"
+              type="range"
+              min="0"
+              max="100"
+              value="50"
+            />
+            <button
+              class="view-end"
+              data-view="100"
+              aria-label="Show all original CGA graphics"
+            >
+              CGA
+            </button>
+          </div>
+          <p id="comparison-help">
+            Drag the slider or the divider in the game.
+          </p>
         </div>
         <div id="stage">
           <canvas
@@ -36,122 +67,151 @@
             height="1080"
             tabindex="0"
             aria-label="Alley Cat game. Arrow keys move and jump; Space performs actions."
-          ></canvas
-          ><canvas
+          ></canvas>
+          <canvas
             id="original"
             width="320"
             height="200"
             aria-hidden="true"
           ></canvas>
-          <div id="divider"></div>
-          <button id="skip-intro" hidden>Enter the alley →</button
-          ><button id="continue-save" hidden>Continue saved game</button
-          ><button id="exit-fullscreen">Exit full screen</button>
-          <div id="cover">
-            <p class="eyebrow">A CLASSIC, SEEN AGAIN</p>
-            <h2>Back to the alley.</h2>
-            <p id="boot">The original rules. A new coat of paint.</p>
-            <button id="start" class="primary">Play Alley Cat</button>
-            <p class="hint">Arrows move & jump · Space interacts</p>
+          <img
+            id="preview-hd"
+            src="preview-hd.webp"
+            width="1440"
+            height="1080"
+            fetchpriority="high"
+            alt="Alley Cat with new HD artwork"
+          />
+          <img
+            id="preview-cga"
+            src="preview-cga.png"
+            width="320"
+            height="200"
+            alt="The same game frame in original CGA graphics"
+          />
+          <div id="divider">
+            <button
+              id="divider-handle"
+              type="button"
+              role="slider"
+              aria-label="CGA reveal on the game"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="50"
+              aria-orientation="horizontal"
+            >
+              <span aria-hidden="true">↔</span>
+            </button>
+          </div>
+          <div class="view-labels" aria-hidden="true">
+            <span id="cga-label">1984 / CGA</span
+            ><span id="hd-label">HD REMASTER</span>
+          </div>
+          <button id="skip-intro" hidden>Enter the alley →</button>
+          <div id="cover" role="status" hidden>
+            <p id="boot">Loading the alley…</p>
+          </div>
+          <button id="exit-fullscreen">Exit full screen</button>
+        </div>
+        <div class="player-bar">
+          <div class="play-actions">
+            <button id="start" class="primary">Play Alley Cat</button
+            ><button id="pause" class="primary" hidden disabled>Pause</button
+            ><button id="continue-save" hidden>Continue</button
+            ><span id="status" role="status">Ready to play</span>
+          </div>
+          <div class="utility-actions">
+            <button id="sound" disabled>Sound on</button
+            ><button id="fullscreen">Full screen</button
+            ><button id="options" aria-haspopup="dialog">Options</button>
           </div>
         </div>
-        <div class="toolbar">
-          <div>
-            <button id="pause" disabled>Pause</button
-            ><button id="restart" disabled>Restart</button
-            ><button id="save" disabled>Save</button
-            ><button id="load" disabled>Restore</button
-            ><button id="sound" disabled>Sound on</button
-            ><button id="fullscreen">Full screen</button>
-          </div>
-          <label class="comparison"
-            >HD
-            <input
-              id="wipe"
-              aria-label="Original graphics comparison"
-              type="range"
-              min="0"
-              max="100"
-              value="0"
-            />
-            CGA</label
-          >
-        </div>
-        <div class="touch" aria-label="Game controls">
+        <div class="touch" aria-label="Touch game controls">
           <button data-key="Home" aria-label="Jump left">↖</button
+          ><button data-key="ArrowUp" aria-label="Jump up">↑</button
           ><button data-key="PageUp" aria-label="Jump right">↗</button
           ><button data-key="ArrowLeft" aria-label="Move left">←</button
-          ><button data-key="ArrowUp" aria-label="Jump up">↑</button
-          ><button data-key="ArrowRight" aria-label="Move right">→</button
           ><button data-key="ArrowDown" aria-label="Move down">↓</button
-          ><button data-key="Space">Action</button
-          ><span id="hud">Three lives. A whole neighborhood.</span>
+          ><button data-key="ArrowRight" aria-label="Move right">→</button
+          ><button data-key="Space">Action</button>
         </div>
+        <p class="keyboard-hint">
+          <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move &amp; jump
+          <span><kbd>Space</kbd> interact</span>
+        </p>
+        <dialog id="settings" aria-labelledby="settings-title">
+          <div class="dialog-heading">
+            <h2 id="settings-title">Game options</h2>
+            <button id="close-settings" aria-label="Close options">
+              Close
+            </button>
+          </div>
+          <p id="hud" class="muted">
+            Explore the alley and win your way to courtship.
+          </p>
+          <div class="game-settings">
+            <label
+              >Game<select id="practice">
+                <option value="">New campaign</option>
+                <option value="0">Practice: Alley</option>
+                <option value="1">Practice: Fishbowl</option>
+                <option value="2">Practice: Aquarium</option>
+                <option value="3">Practice: Bookshelf</option>
+                <option value="4">Practice: Cheese</option>
+                <option value="5">Practice: Birdcage</option>
+                <option value="6">Practice: Dogs &amp; food</option>
+                <option value="7">Practice: Courtship</option>
+              </select></label
+            >
+            <label
+              >Difficulty<select id="difficulty">
+                <option value="0">Kitten</option>
+                <option value="1">House Cat</option>
+                <option value="2">Tomcat</option>
+                <option value="3">Alley Cat</option>
+              </select></label
+            >
+          </div>
+          <button id="restart" class="primary">Start selected game</button>
+          <section class="save-options" aria-label="Saved game">
+            <div>
+              <button id="save" disabled>Save game</button
+              ><button id="load" disabled>Restore save</button>
+            </div>
+            <p id="snapshot-status" role="status">
+              Your save stays in this browser.
+            </p>
+          </section>
+          <details>
+            <summary>How to play</summary>
+            <p>
+              Jump onto bins, catch the clotheslines, and enter open windows.
+              Complete each room's challenge to reach courtship.
+            </p>
+            <dl>
+              <dt>Move &amp; jump</dt>
+              <dd>Arrow keys or WASD</dd>
+              <dt>Interact</dt>
+              <dd>Space or Alt</dd>
+              <dt>Diagonal jump</dt>
+              <dd>Home / Page Up</dd>
+              <dt>Pause</dt>
+              <dd>Escape</dd>
+            </dl>
+            <p>
+              Click the game after using the slider to return to keyboard
+              controls. Switching tabs pauses the game.
+            </p>
+          </details>
+        </dialog>
       </section>
-      <section class="notes">
-        <div>
-          <p class="eyebrow">WHAT YOU’RE PLAYING</p>
-          <h2 id="mode-title">The same cat. A new coat of paint.</h2>
-          <p id="explanation">
-            Explore the alley, complete the room challenges, and win your way to
-            courtship. Use the slider to reveal the original graphics at any
-            moment.
-          </p>
-          <p id="limit" class="muted">
-            Arrows or WASD move. Space or Alt interacts. Home / Page Up jump
-            diagonally. Choose your difficulty before starting.
-          </p>
-        </div>
-        <div class="inspect">
-          <label
-            >Start
-            <select id="practice">
-              <option value="">New campaign</option>
-              <option value="0">Practice · Alley</option>
-              <option value="1">Practice · Fishbowl</option>
-              <option value="2">Practice · Aquarium</option>
-              <option value="3">Practice · Bookshelf</option>
-              <option value="4">Practice · Cheese</option>
-              <option value="5">Practice · Birdcage</option>
-              <option value="6">Practice · Dogs &amp; food</option>
-              <option value="7">Practice · Courtship</option>
-            </select></label
-          >
-          <label
-            >Difficulty
-            <select id="difficulty">
-              <option value="0">Kitten</option>
-              <option value="1">House Cat</option>
-              <option value="2">Tomcat</option>
-              <option value="3">Alley Cat</option>
-            </select></label
-          >
-          <label
-            ><input id="geometry" type="checkbox" /> Show original
-            geometry</label
-          ><label
-            >Timing profile
-            <select id="cycles">
-              <option value="1500">1,500 cycles</option>
-              <option value="3000">3,000 cycles</option>
-            </select></label
-          >
-          <p id="snapshot-status" role="status">
-            Your save is stored in this browser.
-          </p>
-        </div>
-      </section>
-      <details>
-        <summary>Diagnostics</summary>
-        <pre id="log"></pre>
-      </details>
       <footer>
-        Alley Cat, hand-painted for today.
-        <a href="https://github.com/dk8827/alleycat-remastered"
-          >Source &amp; contributing</a
-        >
+        <p>
+          Original game by Bill Williams.<br />New HD artwork created with
+          ChatGPT Images 2.5.
+        </p>
       </footer>
     </main>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="boot.js"></script>
   </body>
 </html>

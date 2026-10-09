@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Alley Cat with hand-painted graphics and a live CGA/HD comparison slider",
+  "description": "Alley Cat with AI-generated HD graphics and a live CGA/HD comparison slider",
   "engines": {
     "node": ">=22"
   },
