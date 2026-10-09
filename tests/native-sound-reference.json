@@ -1,0 +1,25 @@
+{
+  "source": "Original CAT.EXE sound routine bytes, test-only entry point from native-sound-probe.py",
+  "emulator": "Pinned js-dos DOSBox-X normal 8086 core, CGA, 44100 Hz mono",
+  "measurement": "First to last PCM sample > 0.03; join gaps shorter than 5 ms. These are audible spans, not port timestamps.",
+  "routines": [
+    "58f8",
+    "590e",
+    "5b28:4096",
+    "5b28:512"
+  ],
+  "milliseconds": {
+    "1500": [
+      4.2404,
+      3.9683,
+      1.8367,
+      0.3401
+    ],
+    "3000": [
+      2.0181,
+      2.1769,
+      1.8367,
+      0.3175
+    ]
+  }
+}

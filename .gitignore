@@ -1,0 +1,8 @@
+node_modules/
+.venv/
+build/
+dist/
+__pycache__/
+output/
+.playwright-cli/
+.DS_Store

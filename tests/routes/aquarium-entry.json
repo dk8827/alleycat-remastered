@@ -1,0 +1,147 @@
+{
+  "kind": "startup-inputs",
+  "timing": "live",
+  "cycles": 1500,
+  "difficulty": 0,
+  "route": [
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 45
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        3
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 284205
+    }
+  ],
+  "tailCycles": 244131,
+  "final": {
+    "scene": 2,
+    "x": 150,
+    "y": 4,
+    "lives": 3,
+    "score": "0000070"
+  }
+}

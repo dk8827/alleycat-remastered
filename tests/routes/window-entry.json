@@ -1,0 +1,93 @@
+{
+  "kind": "startup-inputs",
+  "timing": "live",
+  "cycles": 1500,
+  "difficulty": 0,
+  "route": [
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 375000
+    }
+  ],
+  "tailCycles": 45,
+  "final": {
+    "scene": 1,
+    "x": 144,
+    "y": 102,
+    "lives": 3,
+    "window": 15,
+    "wx": 264,
+    "wy": 56,
+    "vd": 1,
+    "support": 0
+  }
+}

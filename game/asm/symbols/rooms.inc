@@ -1,0 +1,109 @@
+; Reviewed rooms DS offsets. No storage is allocated here.
+
+fish_remaining                              equ 0x3410 ; 1 bytes
+aquarium_fish_frame_offset                  equ 0x3411 ; 1 x 2 bytes
+aquarium_hazard_frame_offset                equ 0x3413 ; 1 x 2 bytes
+aquarium_update_slot                        equ 0x3415 ; 1 x 2 bytes
+aquarium_horizontal_direction               equ 0x3417 ; 24 x 1 bytes
+aquarium_vertical_direction                 equ 0x342f ; 24 x 1 bytes
+aquarium_object_x                           equ 0x3447 ; 24 x 2 bytes
+aquarium_object_y                           equ 0x3477 ; 24 x 1 bytes
+aquarium_background_absent                  equ 0x348f ; 24 x 1 bytes
+aquarium_object_inactive                    equ 0x34a7 ; 24 x 1 bytes
+aquarium_saved_video_offsets                equ 0x34bf ; 24 x 2 bytes
+aquarium_y_minimum                          equ 0x34f1 ; 24 x 1 bytes
+aquarium_last_batch_tick                    equ 0x3509 ; 1 x 2 bytes
+aquarium_current_tick                       equ 0x350b ; 1 x 2 bytes
+aquarium_disabled_hazard_counts             equ 0x351c ; 8 x 1 bytes
+bookshelf_target_x                          equ 0x37a3 ; 3 x 2 bytes
+bookshelf_target_video_offsets              equ 0x37a9 ; 3 x 2 bytes
+bookshelf_targets_remaining                 equ 0x37af ; 1 bytes
+bookshelf_target_active                     equ 0x37b0 ; 3 x 2 bytes
+bookshelf_target_byte_offset                equ 0x37b6 ; 1 x 2 bytes
+bookshelf_targets_last_tick                 equ 0x37b8 ; 1 x 2 bytes
+cheese_target_hidden                        equ 0x3eae ; 4 x 1 bytes
+cheese_target_collected                     equ 0x3eb2 ; 4 x 1 bytes
+cheese_target_countdown                     equ 0x3eb6 ; 4 x 1 bytes
+cheese_target_x                             equ 0x3ecc ; 4 x 2 bytes
+cheese_target_y                             equ 0x3ed4 ; 4 x 1 bytes
+cheese_targets_remaining                    equ 0x3ed8 ; 1 bytes
+cheese_update_slot                          equ 0x3eda ; 1 x 2 bytes
+cheese_last_batch_tick                      equ 0x3edc ; 1 x 2 bytes
+bird_cage_x                                 equ 0x40a8 ; 1 x 2 bytes
+bird_cage_y                                 equ 0x40aa ; 1 x 1 bytes
+bird_cage_video_offset                      equ 0x40ab ; 1 x 2 bytes
+bird_x                                      equ 0x40b2 ; 1 x 2 bytes
+bird_y                                      equ 0x40b4 ; 1 x 1 bytes
+bird_last_batch_tick                        equ 0x40b5 ; 1 x 2 bytes
+dog_video_offsets                           equ 0x4411 ; 12 x 2 bytes
+dog_sprite_pointers                         equ 0x4429 ; 12 x 2 bytes
+dog_slot_occupied                           equ 0x4441 ; 12 x 2 bytes
+dog_alert_phase                             equ 0x4459 ; 12 x 2 bytes
+dog_occupied_counts                         equ 0x4471 ; 8 x 1 bytes
+food_initial_portions                       equ 0x4479 ; 8 x 1 bytes
+food_slot_x                                 equ 0x4481 ; 12 x 2 bytes
+food_slot_y                                 equ 0x4499 ; 12 x 1 bytes
+food_portions                               equ 0x44c4 ; 12 x 1 bytes
+food_eating_accumulator                     equ 0x44d0 ; 1 x 1 bytes
+food_slots_remaining                        equ 0x44d6 ; 1 bytes
+courtship_cat_work_record                   equ 0x4548 ; 1 x 12 bytes
+courtship_cat_records                       equ 0x4554 ; 7 x 12 bytes
+courtship_cat_record_pointers               equ 0x45a8 ; 7 x 2 bytes
+courtship_cat_slot                          equ 0x45b6 ; 2 bytes
+
+; Instruction-derived room object and cage fields.
+courtship_platform_y                           equ 0x2bd4 ; 7 x 1 bytes
+courtship_platform_row_offsets                 equ 0x2bdb ; 7 x 1 bytes
+courtship_platform_cells                       equ 0x2be2 ; 126 x 1 bytes
+shared_object_background                       equ 0x31e8 ; 120 x 1 bytes
+shared_object_animation_pointers               equ 0x3260 ; 13 x 2 bytes
+shared_object_animation_offset                 equ 0x327a ; 1 x 2 bytes
+shared_object_x                                equ 0x327d ; 1 x 2 bytes
+shared_object_y                                equ 0x327f ; 1 x 1 bytes
+shared_object_horizontal_direction             equ 0x3280 ; 1 x 1 bytes
+shared_object_vertical_direction               equ 0x3281 ; 1 x 1 bytes
+shared_object_saved_video_offset               equ 0x3282 ; 1 x 2 bytes
+shared_object_next_video_offset                equ 0x3284 ; 1 x 2 bytes
+shared_object_background_absent                equ 0x3286 ; 1 x 1 bytes
+shared_object_mark_column                      equ 0x328a ; 1 x 2 bytes
+shared_object_last_tick                        equ 0x328c ; 1 x 2 bytes
+floor_mark_counts                              equ 0x328e ; 40 x 1 bytes
+floor_mark_previous_column                     equ 0x32b6 ; 1 x 2 bytes
+floor_mark_images                              equ 0x32b8 ; 5 x 10 bytes
+shared_object_decision_counter                 equ 0x32ea ; 1 x 1 bytes
+shared_object_decision_accumulator             equ 0x32eb ; 1 x 1 bytes
+shared_object_player_distance                  equ 0x32ec ; 1 x 1 bytes
+shared_object_direction_to_player_x            equ 0x32ed ; 1 x 1 bytes
+shared_object_direction_to_player_y            equ 0x32ee ; 1 x 1 bytes
+shared_object_previous_x                       equ 0x32ef ; 1 x 2 bytes
+shared_object_previous_y                       equ 0x32f1 ; 1 x 1 bytes
+shared_object_scene_tick_intervals             equ 0x32f2 ; 7 x 2 bytes
+bird_cage_last_tick                            equ 0x40ad ; 1 x 2 bytes
+bird_cage_push_pending                         equ 0x40af ; 1 x 1 bytes
+bird_cage_push_direction                       equ 0x40b0 ; 1 x 1 bytes
+bird_cage_falling                              equ 0x40b1 ; 1 x 1 bytes
+courtship_object_background                    equ 0x70cc ; 32 x 1 bytes
+courtship_object_last_cell                     equ 0x70ec ; 1 x 2 bytes
+courtship_object_last_tick                     equ 0x70ee ; 1 x 2 bytes
+courtship_object_animation_phase               equ 0x70f0 ; 1 x 2 bytes
+courtship_object_active                        equ 0x70f2 ; 1 x 1 bytes
+courtship_object_x                             equ 0x70f3 ; 1 x 2 bytes
+courtship_object_y                             equ 0x70f5 ; 1 x 1 bytes
+courtship_object_horizontal_direction          equ 0x70f6 ; 1 x 1 bytes
+courtship_object_background_absent             equ 0x70f7 ; 1 x 1 bytes
+courtship_object_saved_video_offset            equ 0x70f8 ; 1 x 2 bytes
+courtship_object_next_video_offset             equ 0x70fa ; 1 x 2 bytes
+
+courtship_object_side_spawn_y                  equ 0x70b0 ; 8 x 1 bytes
+courtship_object_top_spawn_x                   equ 0x70b8 ; 10 x 2 bytes
+courtship_object_cell_draw_x                   equ 0x70fc ; 16 x 2 bytes
+courtship_object_cell_draw_y                   equ 0x7120 ; 7 x 1 bytes
+aquarium_drowning_thresholds                   equ 0x0589 ; 8 x 2 bytes
+aquarium_failure_thresholds                    equ 0x0599 ; 8 x 2 bytes
+aquarium_palette_phase_one_ticks               equ 0x05a9 ; 8 x 2 bytes
+aquarium_palette_phase_two_ticks               equ 0x05b9 ; 8 x 2 bytes
+aquarium_palette_phase_three_ticks             equ 0x05c9 ; 8 x 2 bytes
+aquarium_last_surface_tick                     equ 0x05f1 ; 1 x 2 bytes
+aquarium_drowning                              equ 0x05f3 ; 1 x 1 bytes
+aquarium_bubble_distance                       equ 0x05f4 ; 1 x 1 bytes
+aquarium_bubble_countdown                      equ 0x05f5 ; 1 x 1 bytes

@@ -1,0 +1,174 @@
+{
+  "kind": "practice-inputs",
+  "practice": 5,
+  "timing": "live",
+  "cycles": 1500,
+  "difficulty": 0,
+  "route": [
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [],
+      "cycles": 300000
+    },
+    {
+      "keys": [],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        4
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [],
+      "cycles": 300000
+    },
+    {
+      "keys": [],
+      "cycles": 300000
+    },
+    {
+      "keys": [],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        4
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        4
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        4
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        4
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        4
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        4
+      ],
+      "cycles": 300000
+    },
+    {
+      "keys": [
+        1,
+        2
+      ],
+      "cycles": 224699
+    }
+  ],
+  "tailCycles": 4560759,
+  "final": {
+    "scene": 0,
+    "x": 0,
+    "y": 180,
+    "lives": 3,
+    "score": "0005790"
+  }
+}

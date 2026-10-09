@@ -1,0 +1,24 @@
+{
+  "name": "alleycat-remastered",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Alley Cat with hand-painted graphics and a live CGA/HD comparison slider",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "setup": "node tools/setup.mjs",
+    "build": "node tools/build.mjs",
+    "build:engine": "node tools/build.mjs --engine-only",
+    "start": "node tools/serve.mjs",
+    "dev": "npm run build && npm start",
+    "test": "npm run build:engine && node --test tests/*.test.mjs",
+    "check": "npm test && npm run build",
+    "format": "prettier --write web engine renderer tools/*.mjs tests/*.mjs tests/helpers/*.mjs assets/atlas.json package.json",
+    "format:check": "prettier --check web engine renderer tools/*.mjs tests/*.mjs tests/helpers/*.mjs assets/atlas.json package.json"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}
