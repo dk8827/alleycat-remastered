@@ -1,12 +1,16 @@
 # Alley Cat Remastered
 
-**The original game logic. Two renderers. One live game.**
+**From a 1984 DOS executable to a playable HD remaster.**
 
-Alley Cat's DOS program, translated into JavaScript and paired with a hand-painted HD renderer. Movement, collisions, enemies, scoring, room challenges, and progression still come from the original game instructions. Slide between **CGA and HD while you play**—both views show the same running game.
+This project began by reverse-engineering Alley Cat into assembly that rebuilds the original DOS executable **byte for byte**. We then statically translated its instructions into JavaScript and built an independent, hand-painted HD renderer around the running game.
+
+The original instructions still drive movement, collisions, enemies, scoring, and progression. The **live CGA/HD slider** reveals two views of the same execution.
+
+[Run locally](#run-locally) · [How it works](#one-game-two-views) · [Verification](#4-compare-execution-then-test-the-presentation) · [Source guide](docs/architecture.md)
 
 ![The same live game, with original CGA on the left and HD on the right](docs/images/gameplay.png)
 
-The starting point is a **55,067-byte executable reproduced exactly from assembly source**. The browser build translates **8,546 instructions** into JavaScript, supplies the devices they expect, and adds a new presentation layer around their execution.
+**55,067 bytes matched · 8,546 instructions translated · One game, two renderers**
 
 ## One game, two views
 
@@ -31,9 +35,9 @@ For example, the original instructions decide when a window opens, how far it ha
 
 ## How it was built
 
-### 1. Preserve the program exactly
+### 1. Recover a byte-exact disassembly
 
-Starting with the DOS executable, we recovered its assembly instructions and initialized data into buildable source. NASM reproduces the entire file: instructions, graphics, sound tables, executable header, relocations, and padding.
+The first stage was a matching disassembly: recovering the executable’s assembly instructions and initialized data into buildable source. NASM reproduces the entire file, including instructions, graphics, sound tables, the executable header, relocations, and padding.
 
 Every build checks the result against the original SHA-256 before translation. A changed byte fails the build. The [assembly](game/asm/alleycat.asm) and [build tools](tools/build.py) are included in this repository.
 
@@ -44,6 +48,28 @@ The [translator](tools/translate.py) emits JavaScript for each instruction, grou
 The browser executes this generated code directly. A device model provides the BIOS services, keyboard state, clock, CGA behavior, and programmable timer the game expects. Speaker timer and gate writes drive audio synthesis, preserving the game's own melodies and effect sequences.
 
 All of this runs in the browser. The local Node process only serves static files.
+
+<details>
+<summary>See an actual 8086 instruction become JavaScript</summary>
+
+At `CS:002F`, the game prepares the BIOS video-mode request:
+
+```asm
+mov ax, 4
+```
+
+The generated JavaScript for that instruction, formatted for readability:
+
+```js
+case 47:                 // CS:002F
+  c.ip = 50;             // Address of the next instruction
+  c.r[0] = 4 & 65535;     // AX, kept within 16 bits
+  return;
+```
+
+Other instructions use the same register and memory model, with helpers for arithmetic flags, interrupts, and device I/O. The instruction addresses connect the assembly, generated code, and presentation hooks.
+
+</details>
 
 ### 3. Fit the artwork to the game
 
