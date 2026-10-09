@@ -699,6 +699,10 @@ dd {
   .playground:is(:fullscreen, .expanded) .touch {
     display: contents;
   }
+  /* Before play, leave room for both New game and Continue on short screens. */
+  .playground:is(:fullscreen, .expanded):has(#start:not([hidden])) .touch {
+    visibility: hidden;
+  }
   .playground:is(:fullscreen, .expanded) .direction-pad {
     grid-column: 1;
     grid-row: 2;
