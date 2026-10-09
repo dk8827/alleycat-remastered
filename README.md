@@ -6,7 +6,9 @@ This project began by reverse-engineering Alley Cat into assembly that rebuilds 
 
 The original instructions still drive movement, collisions, enemies, scoring, and progression. The **live CGA/HD slider** reveals two views of the same execution.
 
-[Run locally](#run-locally) · [How it works](#one-game-two-views) · [Verification](#4-compare-execution-then-test-the-presentation) · [Source guide](docs/architecture.md)
+[**Play in your browser →**](https://dk8827.github.io/alleycat-remastered/)
+
+[How it works](#one-game-two-views) · [Artwork](#artwork) · [Verification](#4-compare-execution-then-test-the-presentation) · [Run locally](#run-locally) · [Source guide](docs/architecture.md)
 
 ![The same live game, with original CGA on the left and HD on the right](docs/images/gameplay.png)
 
@@ -96,7 +98,36 @@ Run `npm test` to execute the **82-test suite**. CI builds and tests the project
 
 **What “original” means here:** the rebuilt DOS program is byte-identical, and the translated execution matches the recorded states in the covered tests. Browser device timing is modeled. We do not claim cycle-exact physical-PC behavior, identical audio waveforms, or proof of every possible playthrough.
 
+## Artwork
+
+**All new HD paintings were created with ChatGPT Images 2.5.** Characters, scenery, props, and effects were generated in a consistent painted-cartoon style, then prepared as sprite sheets and registered to the original game's coordinates and animation states.
+
+These are source sheets used by the renderer. The jumping and hanging poses face away from the camera, just as they do in CGA; the fight clouds replace the original cat-and-dog scuffle frames.
+
+| Jumping, hanging, and falling                                                                                      | Cat-and-dog fight                                              |
+| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| ![Three painted cat poses: jumping and hanging from behind, then falling face-forward](assets/cat-vertical-v1.png) | ![Three painted cat-and-dog fight clouds](assets/fight-v1.png) |
+
+The same approach extends to the game's courtship and bonus sequences. Below, the original CGA view is on the left and the HD presentation is on the right.
+
+![Courtship bonus screen in CGA and HD, with corresponding hearts, cupid borders, score, and multiplier](docs/images/courtship-bonus-comparison.png)
+
+<details>
+<summary>More artwork: courtship animation, results, and food bowls</summary>
+
+| Courtship animation sheet                                             | Result screens and food bowls                                                                       |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| ![Cream cat walking and dancing poses](assets/courtship-cycle-v2.png) | ![Painted heart, kissing cats, expressions, and four food-bowl levels](assets/result-scenes-v1.png) |
+
+![Four dancing cats in the original CGA presentation and the HD renderer](docs/images/courtship-dance-comparison.png)
+
+</details>
+
+The image-generation credit covers the new HD paintings. Original CGA graphics, game data, music, and sound effects come from Alley Cat; sprite registration, clipping, and procedural drawing are handled by the renderer.
+
 ## Play
+
+[**Play Alley Cat Remastered**](https://dk8827.github.io/alleycat-remastered/) — no installation required. Start the game, then drag the CGA/HD divider while you play.
 
 - Eight scenes, room challenges, courtship, and four difficulty settings.
 - A live CGA/HD slider that also works through transitions and result screens.
@@ -153,6 +184,8 @@ BASE_PATH=/alleycat-remastered PORT=8771 npm start
 
 Open `http://127.0.0.1:8771/alleycat-remastered/`. Any static host can serve `dist/`; no Python service, DOSBox download, or application backend is needed at runtime. HTTPS or localhost is required for browser cryptography and reliable audio startup.
 
+The hosted demo uses GitHub Pages. Pushes to `main` deploy the static player only after the workflow's tests and build succeed; pull requests run checks without publishing.
+
 | Directory   | Purpose                                                         |
 | ----------- | --------------------------------------------------------------- |
 | `game/asm/` | Game program and data used by the build                         |
@@ -171,6 +204,6 @@ The player has been checked in desktop Chromium and Firefox, and mobile WebKit. 
 
 ## Credits and notices
 
-Alley Cat was created by Bill Williams. This is an unofficial fan project. The HD artwork was created using image generation and registered to the game's drawing coordinates.
+Alley Cat was created by Bill Williams. This is an unofficial fan project. All new HD paintings were created with **ChatGPT Images 2.5** and registered to the game's drawing coordinates.
 
 See [notices](NOTICE.md) and [component licensing](LICENSES.md) for original game material and third-party components.
