@@ -29,7 +29,6 @@
         <div class="comparison">
           <div class="comparison-heading">
             <h2>Slide between 1984 and today.</h2>
-            <span id="comparison-value" aria-hidden="true">50 / 50</span>
           </div>
           <div class="comparison-track">
             <button
@@ -37,11 +36,11 @@
               data-view="0"
               aria-label="Show all HD graphics"
             >
-              HD
+              All HD
             </button>
             <input
               id="wipe"
-              aria-label="CGA reveal"
+              aria-label="Reveal original CGA graphics"
               aria-describedby="comparison-help"
               type="range"
               min="0"
@@ -53,7 +52,7 @@
               data-view="100"
               aria-label="Show all original CGA graphics"
             >
-              CGA
+              All original
             </button>
           </div>
           <p id="comparison-help">
@@ -127,13 +126,23 @@
           </div>
         </div>
         <div class="touch" aria-label="Touch game controls">
-          <button data-key="Home" aria-label="Jump left">↖</button
-          ><button data-key="ArrowUp" aria-label="Jump up">↑</button
-          ><button data-key="PageUp" aria-label="Jump right">↗</button
-          ><button data-key="ArrowLeft" aria-label="Move left">←</button
-          ><button data-key="ArrowDown" aria-label="Move down">↓</button
-          ><button data-key="ArrowRight" aria-label="Move right">→</button
-          ><button data-key="Space">Action</button>
+          <div class="direction-pad" role="group" aria-label="Move and jump">
+            <button data-key="Home" aria-label="Jump left" disabled>↖</button>
+            <button data-key="ArrowUp" aria-label="Jump up" disabled>↑</button>
+            <button data-key="PageUp" aria-label="Jump right" disabled>
+              ↗
+            </button>
+            <button data-key="ArrowLeft" aria-label="Move left" disabled>
+              ←
+            </button>
+            <button data-key="ArrowDown" aria-label="Move down" disabled>
+              ↓
+            </button>
+            <button data-key="ArrowRight" aria-label="Move right" disabled>
+              →
+            </button>
+          </div>
+          <button class="touch-action" data-key="Space" disabled>Action</button>
         </div>
         <p class="keyboard-hint">
           <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move &amp; jump
@@ -199,8 +208,8 @@
               <dd>Escape</dd>
             </dl>
             <p>
-              Click the game after using the slider to return to keyboard
-              controls. Switching tabs pauses the game.
+              After adjusting the slider with the keyboard, Tab to the game to
+              resume controls. Switching tabs pauses the game.
             </p>
           </details>
         </dialog>

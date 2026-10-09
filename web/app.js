@@ -62,6 +62,10 @@ function key(owner, code, down) {
 }
 
 function controls() {
+  const playing = active && !paused && !starting && !saving && !state?.gameover;
+  document.querySelector(".playground").classList.toggle("playing", playing);
+  for (const button of document.querySelectorAll("[data-key]"))
+    button.disabled = !playing;
   for (const id of ["pause", "save", "sound"])
     $(id).disabled = !active || starting || saving;
   $("save").disabled ||= session?.phase === "intro";
@@ -239,6 +243,10 @@ export async function start(restore = false, initialAudio = null) {
   } finally {
     starting = false;
     controls();
+    if (active && matchMedia("(pointer: coarse)").matches)
+      document
+        .querySelector(".playground")
+        .scrollIntoView({ block: "nearest" });
   }
 }
 function pause(value) {

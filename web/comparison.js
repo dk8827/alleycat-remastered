@@ -2,8 +2,8 @@
 export function comparisonControls({
   input,
   handle,
+  divider,
   canvas,
-  output,
   onChange,
   returnFocus,
 }) {
@@ -15,11 +15,21 @@ export function comparisonControls({
     input.setAttribute("aria-valuetext", description);
     handle.setAttribute("aria-valuenow", v);
     handle.setAttribute("aria-valuetext", description);
-    output.textContent =
-      v === 0 || v === 100 ? description : `${v} / ${100 - v}`;
     onChange(v);
   }
   input.addEventListener("input", () => update(input.value));
+  // Pointer users resume playing after a drag; keyboard users keep native range focus.
+  let rangePointer = null;
+  input.addEventListener("pointerdown", (event) => {
+    if (event.isPrimary && event.button === 0) rangePointer = event.pointerId;
+  });
+  function finishRange(event) {
+    if (event.pointerId !== rangePointer) return;
+    rangePointer = null;
+    returnFocus();
+  }
+  window.addEventListener("pointerup", finishRange);
+  window.addEventListener("pointercancel", finishRange);
   for (const button of document.querySelectorAll("[data-view]")) {
     button.addEventListener("click", () => {
       update(button.dataset.view);
@@ -31,26 +41,26 @@ export function comparisonControls({
     const rect = canvas.getBoundingClientRect();
     if (rect.width) update(((event.clientX - rect.left) / rect.width) * 100);
   }
-  handle.addEventListener("pointerdown", (event) => {
+  divider.addEventListener("pointerdown", (event) => {
     if (!event.isPrimary || event.button !== 0) return;
     event.preventDefault();
     pointer = event.pointerId;
-    handle.setPointerCapture(pointer);
+    divider.setPointerCapture(pointer);
     move(event);
   });
-  handle.addEventListener("pointermove", (event) => {
+  divider.addEventListener("pointermove", (event) => {
     if (event.pointerId === pointer) move(event);
   });
   function finish(event) {
     if (event.pointerId !== pointer) return;
     pointer = null;
-    if (handle.hasPointerCapture(event.pointerId))
-      handle.releasePointerCapture(event.pointerId);
+    if (divider.hasPointerCapture(event.pointerId))
+      divider.releasePointerCapture(event.pointerId);
     returnFocus();
   }
-  handle.addEventListener("pointerup", finish);
-  handle.addEventListener("pointercancel", finish);
-  handle.addEventListener("lostpointercapture", finish);
+  divider.addEventListener("pointerup", finish);
+  divider.addEventListener("pointercancel", finish);
+  divider.addEventListener("lostpointercapture", finish);
   handle.addEventListener("keydown", (event) => {
     const value = Number(input.value);
     const next = {

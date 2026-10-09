@@ -125,6 +125,7 @@ button.primary:hover:not(:disabled) {
   display: none !important;
 }
 .playground {
+  scroll-margin-block: 12px;
   width: min(100%, calc((100svh - 278px) * 4 / 3));
   min-width: min(100%, 600px);
   max-width: 1000px;
@@ -145,15 +146,6 @@ button.primary:hover:not(:disabled) {
   font-weight: 650;
   letter-spacing: -0.025em;
   margin: 0;
-}
-#comparison-value {
-  font:
-    11px ui-monospace,
-    "SFMono-Regular",
-    Consolas,
-    monospace;
-  color: var(--muted);
-  white-space: nowrap;
 }
 .comparison-track {
   display: grid;
@@ -239,11 +231,19 @@ canvas {
 }
 #divider {
   position: absolute;
-  width: 2px;
-  background: #fff6dc;
-  pointer-events: none;
+  width: 40px;
+  background: linear-gradient(
+    to right,
+    transparent calc(50% - 1px),
+    #fff6dc calc(50% - 1px),
+    #fff6dc calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+  pointer-events: auto;
+  touch-action: none;
+  cursor: ew-resize;
   z-index: 1;
-  transform: translateX(-1px);
+  transform: translateX(-50%);
 }
 #divider-handle {
   position: absolute;
@@ -378,7 +378,7 @@ kbd {
   -webkit-touch-callout: none;
   font-size: 18px;
 }
-.touch button:last-child {
+.touch .touch-action {
   font-size: 12px;
 }
 .touch .held {
@@ -525,8 +525,9 @@ dd {
 }
 @media (pointer: coarse) {
   .touch {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr) 1.5fr;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .keyboard-hint {
     display: none;
@@ -629,4 +630,90 @@ dd {
   height: 100%;
   object-fit: fill;
   pointer-events: none;
+}
+
+.direction-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  gap: 5px;
+}
+.touch .touch-action {
+  width: 72px;
+  min-height: 64px;
+}
+.playing #divider-handle {
+  opacity: 0.55;
+}
+.playing #divider:hover #divider-handle,
+.playing #divider:focus-within #divider-handle {
+  opacity: 1;
+}
+/* Thumb controls use the landscape margins, leaving the game its full height. */
+@media (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  .playground:is(:fullscreen, .expanded) {
+    display: grid;
+    grid-template-columns: 154px minmax(0, 1fr) 104px;
+    grid-template-rows: 44px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px max(8px, env(safe-area-inset-right)) 8px
+      max(8px, env(safe-area-inset-left));
+  }
+  .playground:is(:fullscreen, .expanded) .comparison {
+    grid-column: 1 / -1;
+    width: min(100%, 600px);
+  }
+  .playground:is(:fullscreen, .expanded) .comparison-track {
+    margin: 0;
+  }
+  .playground:is(:fullscreen, .expanded) #stage {
+    grid-column: 2;
+    grid-row: 2;
+    height: 100%;
+    border-radius: 6px;
+    align-self: stretch;
+  }
+  .playground:is(:fullscreen, .expanded) .player-bar {
+    grid-column: 3;
+    grid-row: 2;
+    align-self: start;
+    flex-direction: column;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .playground:is(:fullscreen, .expanded) .play-actions,
+  .playground:is(:fullscreen, .expanded) .utility-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .playground:is(:fullscreen, .expanded) .player-bar button {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+  .playground:is(:fullscreen, .expanded) #status,
+  .playground:is(:fullscreen, .expanded) #exit-fullscreen {
+    display: none;
+  }
+  .playground:is(:fullscreen, .expanded) .touch {
+    display: contents;
+  }
+  .playground:is(:fullscreen, .expanded) .direction-pad {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+    margin-bottom: 16px;
+  }
+  .playground:is(:fullscreen, .expanded) .touch .touch-action {
+    grid-column: 3;
+    grid-row: 2;
+    align-self: end;
+    justify-self: center;
+    min-height: 64px;
+    margin-bottom: 0;
+  }
+  .playground:is(:fullscreen, .expanded) .direction-pad button {
+    min-height: 48px;
+  }
 }

@@ -26,6 +26,15 @@ export function wipe() {
   $("divider").style.top = (stage.height - h) / 2 + "px";
   $("divider").style.height = h + "px";
   $("divider").style.bottom = "auto";
+  const labels = document.querySelector(".view-labels");
+  labels.style.left = (stage.width - w) / 2 + 12 + "px";
+  labels.style.right = (stage.width - w) / 2 + 12 + "px";
+  labels.style.top = (stage.height - h) / 2 + 10 + "px";
+  $("fullscreen").textContent =
+    document.fullscreenElement ||
+    document.querySelector(".playground").classList.contains("expanded")
+      ? "Exit full screen"
+      : "Full screen";
   const v = Number($("wipe").value);
   original.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
   $("preview-cga").style.clipPath = original.style.clipPath;
@@ -44,7 +53,7 @@ comparisonControls({
   input: $("wipe"),
   handle: $("divider-handle"),
   canvas: original,
-  output: $("comparison-value"),
+  divider: $("divider"),
   onChange: wipe,
   returnFocus: () => screen.focus({ preventScroll: true }),
 });
